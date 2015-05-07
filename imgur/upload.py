@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Upload images to an Imgur account."""
+
 import argparse
 from contextlib import contextmanager
 import multiprocessing
@@ -61,7 +63,8 @@ def upload_image(client, path):
     title = os.path.basename(path)
     try:
         return client.upload_image(path, title=title).link
-    except Error:  # no sure what kind of error will occur
+    # pylint: disable=broad-except
+    except Exception:  # no sure what kind of exception will occur
         sys.stderr.write("%serror: failed to upload %s%s\n" %
                          (RED, path, RESET))
         return None
@@ -71,6 +74,7 @@ def upload_image(client, path):
 # equivalent to (lambda path: upload_image(client, path))
 class Uploader(object):
     """lambda path: upload_image(client, path)"""
+    # pylint: disable=too-few-public-methods
     def __init__(self, client):
         """Init with a client."""
         self.client = client
@@ -79,7 +83,7 @@ class Uploader(object):
         """Call upload_image."""
         return upload_image(self.client, path)
 
-def upload_images(client, paths, max_jobs=None):
+def upload_images(client, paths, jobs=None):
     """Upload images using a pool of workers.
 
     Parameters
@@ -87,9 +91,10 @@ def upload_images(client, paths, max_jobs=None):
     client : pyimgur.Imgur
     paths : list
         List of image paths.
-    max_jobs : int
+    jobs : int
         Number of workers. If None, multiprocessing.cpu_count() * 2 is
-        used.  Default is None.
+        used. If 0, the number of paths is used (not recommended when
+        paths is a large list). Default is None.
 
     Returns
     -------
@@ -99,8 +104,9 @@ def upload_images(client, paths, max_jobs=None):
 
     """
 
-    pool_size = (multiprocessing.cpu_count() * 2 if max_jobs is None
-                 else max_jobs)
+    pool_size = multiprocessing.cpu_count() * 2 if jobs is None else jobs
+    if pool_size == 0:
+        pool_size = len(paths)
     pool = multiprocessing.Pool(processes=pool_size)
     return pool.map(Uploader(client), paths)
 
@@ -122,7 +128,7 @@ def get_log_file():
 
 def main():
     """CLI interface."""
-    description="""Upload images to your Imgur account, and get back
+    description = """Upload images to your Imgur account, and get back
     links. You should put your client_id and client_secret in a
     configuration file $XDG_CONFIG_HOME/imgur/imgur.conf or
     $HOME/.config/imgur/imgur.conf, under the section "oauth". You may
@@ -136,7 +142,13 @@ def main():
     $HOME/.local/share/imgur/upload.log.
     """
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('-j', '--jobs', type=int,
+                        help="""Maximum number of concurrent jobs. If 0,
+                        do not limit the number of jobs (not recommended
+                        when uploading a large list of imagesp). By
+                        default, twice the number of (virtual) CPU cores
+                        is used.""")
     parser.add_argument('--no-https', action='store_true',
                         help="""by default returned URIs use the HTTPS
                         protocol; this option turns HTTPS off and use
@@ -157,7 +169,7 @@ def main():
             log_obj.write('# %s\n' % date)
             sys.stderr.write("%suploading %d images...%s\n" %
                              (GREEN, len(args.paths), RESET))
-            uris = upload_images(client, args.paths)
+            uris = upload_images(client, args.paths, jobs=args.jobs)
             success_count = 0
             failure_count = 0
             for uri in uris:
@@ -172,3 +184,5 @@ def main():
         sys.stderr.write("%ssuccessfully uploaded %d images, "
                          "failed on %d images%s\n" %
                          (GREEN, success_count, failure_count, RESET))
+
+    return 1 if failure_count > 0 else 0

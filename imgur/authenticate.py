@@ -21,7 +21,7 @@ def get_conf_file():
         conf_file = os.path.join(os.environ['XDG_CONFIG_HOME'],
                                  'imgur/imgur.conf')
     else:
-        conf_file =  os.path.expanduser('~/.config/imgur/imgur.conf')
+        conf_file = os.path.expanduser('~/.config/imgur/imgur.conf')
     if not os.path.exists(os.path.dirname(conf_file)):
         os.mkdir(os.path.dirname(conf_file), mode=0o700)
     return conf_file

@@ -4,7 +4,6 @@
 
 import argparse
 import configparser
-import os
 import sys
 import webbrowser
 
@@ -42,9 +41,10 @@ def authorize(client_id, client_secret):
     refresh_token = client.refresh_token
     sys.stderr.write("Refresh token generated.\n")
 
-    # write config file
+    # add credentials to config file
     conf_file = imgur.authenticate.get_conf_file()
     config = configparser.ConfigParser()
+    config.read([conf_file])
     config['oauth'] = {
         'client_id': client_id,
         'client_secret': client_secret,
@@ -61,11 +61,12 @@ def main():
     refresh token. Before you run this script, you need to put your
     client_id and client_secret in a config file
     $XDG_CONFIG_HOME/imgur/imgur.conf (or
-    $HOME/.config/imgur/imgur.conf), under the "oauth" section. The file
-    will be overwritten with the necessary credentials afterwards."""
+    $HOME/.config/imgur/imgur.conf), under the "oauth"
+    section. Additional credentials will be written to this file
+    afterwards."""
     parser = argparse.ArgumentParser(description=description)
     # no arguments
-    args = parser.parse_args()
+    parser.parse_args()
 
     client_id, client_secret, _ = imgur.authenticate.get_credentials()
     if authorize(client_id, client_secret) is None:

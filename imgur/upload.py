@@ -10,38 +10,41 @@ import re
 import subprocess
 import sys
 
-import colorama
-
 import imgur.authenticate
 
 # declare the global foreground ANSI codes
 BLACK = ""
-BLUE = ""
-CYAN = ""
-GREEN = ""
-MAGENTA = ""
 RED = ""
-WHITE = ""
+GREEN = ""
 YELLOW = ""
+BLUE = ""
+MAGENTA = ""
+CYAN = ""
+WHITE = ""
+BOLD = ""
 RESET = ""
 
 @contextmanager
-def init_colorama():
+def init_colors():
     """Set global foreground modifying ANSI codes.
 
-    BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, and RESET.
+    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BOLD and RESET.
 
     """
-
-    # pylint: disable=exec-used,invalid-name
-
-    colorama.init()
-    for color, ansi in colorama.Fore.__dict__.items():
-        exec("global {0}; {0} = '{1}'".format(color, ansi))
+    global BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BOLD, RESET
+    BLACK = "\x1b[30m"
+    RED = "\x1b[31m"
+    GREEN = "\x1b[32m"
+    YELLOW = "\x1b[33m"
+    BLUE = "\x1b[34m"
+    MAGENTA = "\x1b[35m"
+    CYAN = "\x1b[36m"
+    WHITE = "\x1b[37m"
+    BOLD = "\x1b[1m"
+    RESET = "\x1b[0m"
     yield
-    for color in colorama.Fore.__dict__:
-        exec("global {0}; {0} = ''".format(color))
-    colorama.deinit()
+    BLACK = RED = GREEN = YELLOW = BLUE = MAGENTA = CYAN = WHITE = ""
+    BOLD = RESET = ""
 
 def upload_image(client, path):
     """Upload a single image.
@@ -157,7 +160,7 @@ def main():
                         help='path to the image')
     args = parser.parse_args()
 
-    with init_colorama():
+    with init_colors():
         client = imgur.authenticate.gen_client()
         if client is None:
             sys.stderr.write("%sfatal error: failed to create client%s\n" %

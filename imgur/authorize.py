@@ -31,6 +31,8 @@ def authorize(client_id, client_secret):
 
     if client_id is None or client_secret is None:
         sys.stderr.write("warning: client_id or client_secret unavailable\n")
+        sys.stderr.write("warning: please make sure your config file exists "
+                         "and is in valid format\n")
         return None
 
     client = pyimgur.Imgur(client_id, client_secret)

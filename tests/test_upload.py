@@ -45,8 +45,6 @@ class TestUpload(unittest.TestCase):
         with capture_stdout():
             with capture_stderr():
                 with change_home():
-                    if "XDG_CONFIG_HOME" in os.environ:
-                        os.environ.pop("XDG_CONFIG_HOME")
                     self.write_config()
 
                     sys.argv[1:] = ["--no-https", self.imagepath]

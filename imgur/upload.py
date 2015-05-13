@@ -126,7 +126,7 @@ def get_log_file():
     else:
         log_file = os.path.expanduser('~/.local/share/imgur/upload.log')
     if not os.path.exists(os.path.dirname(log_file)):
-        os.mkdir(os.path.dirname(log_file), mode=0o700)
+        os.makedirs(os.path.dirname(log_file), mode=0o700)
     return log_file
 
 def main():

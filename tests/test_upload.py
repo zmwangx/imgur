@@ -45,8 +45,17 @@ class TestUpload(unittest.TestCase):
         with capture_stdout():
             with capture_stderr():
                 with change_home():
+                    if "XDG_CONFIG_HOME" in os.environ:
+                        os.environ.pop("XDG_CONFIG_HOME")
+                    self.write_config()
+
                     sys.argv[1:] = ["--no-https", self.imagepath]
-                    imgur.upload.main()
+                    try:
+                        if imgur.upload.main() == 1:
+                            raise SystemExit(1)
+                    except SystemExit:
+                        raise SystemExit(sys.stderr.getvalue())
+
                     sys.stderr.write("getvalue: %s\n" % str(type(sys.stdout)))
                     output = sys.stdout.getvalue()
                     imageurls = output.strip().split("\n")

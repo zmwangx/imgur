@@ -1,0 +1,4 @@
+Pillow
+git+git://github.com/zmwangx/pyzmwangx.git@master
+coverage
+nose

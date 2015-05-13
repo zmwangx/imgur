@@ -1,8 +1,10 @@
 imgur
 =====
 
+|Build Status|
+
 This Python package is a CLI wrapper around `pyimgur
-<https://github.com/Damgaard/PyImgur>`_ specializing in uploading
+<https://github.com/Damgaard/PyImgur>`_ specialized in uploading
 images (with multiprocessing support). It always does authenticated
 uploads, i.e., uploads to your account, so that you have full control
 over the uploaded images later.
@@ -63,3 +65,6 @@ future use, so you only need to authorize once.
 Alternatively, if you don't call ``imgur-authorize`` explicitly, then
 you will be given the option to authorize upon first use of
 ``imgur-upload``.
+
+.. |Build Status| image:: https://travis-ci.org/zmwangx/imgur.svg?branch=master
+   :target: https://travis-ci.org/zmwangx/imgur

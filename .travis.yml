@@ -1,0 +1,9 @@
+language: python
+python:
+  - 3.3
+  - 3.4
+install:
+  - pip install -r requirements.txt -r tests/requirements.txt
+  - python setup.py develop
+script:
+  - nosetests --verbose --exe --with-coverage --cover-erase --cover-package=imgur --with-doctest

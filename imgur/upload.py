@@ -12,39 +12,7 @@ import sys
 
 import imgur.authenticate
 
-# declare the global foreground ANSI codes
-BLACK = ""
-RED = ""
-GREEN = ""
-YELLOW = ""
-BLUE = ""
-MAGENTA = ""
-CYAN = ""
-WHITE = ""
-BOLD = ""
-RESET = ""
-
-@contextmanager
-def init_colors():
-    """Set global foreground modifying ANSI codes.
-
-    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BOLD and RESET.
-
-    """
-    global BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, BOLD, RESET
-    BLACK = "\x1b[30m"
-    RED = "\x1b[31m"
-    GREEN = "\x1b[32m"
-    YELLOW = "\x1b[33m"
-    BLUE = "\x1b[34m"
-    MAGENTA = "\x1b[35m"
-    CYAN = "\x1b[36m"
-    WHITE = "\x1b[37m"
-    BOLD = "\x1b[1m"
-    RESET = "\x1b[0m"
-    yield
-    BLACK = RED = GREEN = YELLOW = BLUE = MAGENTA = CYAN = WHITE = ""
-    BOLD = RESET = ""
+from zmwangx.colorout import *
 
 def upload_image(client, path):
     """Upload a single image.
@@ -68,8 +36,7 @@ def upload_image(client, path):
         return client.upload_image(path, title=title).link
     # pylint: disable=broad-except
     except Exception:  # no sure what kind of exception will occur
-        sys.stderr.write("%serror: failed to upload %s%s\n" %
-                         (RED, path, RESET))
+        cerror("failed to upload %s" % path)
         return None
 
 # define a one-parameter version of upload_image for
@@ -160,32 +127,28 @@ def main():
                         help='path to the image')
     args = parser.parse_args()
 
-    with init_colors():
-        client = imgur.authenticate.gen_client()
-        if client is None:
-            sys.stderr.write("%sfatal error: failed to create client%s\n" %
-                             (RED, RESET))
-            exit(1)
-        log_file = get_log_file()
-        with open(log_file, 'a', encoding='utf-8') as log_obj:
-            date = subprocess.check_output('date').decode('utf-8').strip()
-            log_obj.write('# %s\n' % date)
-            sys.stderr.write("%suploading %d images...%s\n" %
-                             (GREEN, len(args.paths), RESET))
-            uris = upload_images(client, args.paths, jobs=args.jobs)
-            success_count = 0
-            failure_count = 0
-            for uri in uris:
-                if uri is not None:
-                    if not args.no_https:
-                        uri = re.sub(r'^http://', 'https://', uri)
-                    success_count += 1
-                    print(uri)
-                    log_obj.write('%s\n' % uri)
-                else:
-                    failure_count += 1
-        sys.stderr.write("%ssuccessfully uploaded %d images, "
-                         "failed on %d images%s\n" %
-                         (GREEN, success_count, failure_count, RESET))
+    client = imgur.authenticate.gen_client()
+    if client is None:
+        cfatal_error("failed to create client")
+        exit(1)
+    log_file = get_log_file()
+    with open(log_file, 'a', encoding='utf-8') as log_obj:
+        date = subprocess.check_output('date').decode('utf-8').strip()
+        log_obj.write('# %s\n' % date)
+        cprogress("uploading %d images..." % len(args.paths))
+        uris = upload_images(client, args.paths, jobs=args.jobs)
+        success_count = 0
+        failure_count = 0
+        for uri in uris:
+            if uri is not None:
+                if not args.no_https:
+                    uri = re.sub(r'^http://', 'https://', uri)
+                success_count += 1
+                print(uri)
+                log_obj.write('%s\n' % uri)
+            else:
+                failure_count += 1
+    cprogress("successfully uploaded %d images, failed on %d images" %
+              (success_count, failure_count))
 
     return 1 if failure_count > 0 else 0

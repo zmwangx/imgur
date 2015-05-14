@@ -11,6 +11,8 @@ import pyimgur
 
 import imgur.authenticate
 
+from zmwangx.colorout import *
+
 def authorize(client_id, client_secret):
     """Authorize with Imgur's OAuth API and get refresh token.
 
@@ -30,18 +32,23 @@ def authorize(client_id, client_secret):
     """
 
     if client_id is None or client_secret is None:
-        sys.stderr.write("warning: client_id or client_secret unavailable\n")
-        sys.stderr.write("warning: please make sure your config file exists "
-                         "and is in valid format\n")
+        cwarning("client_id or client_secret unavailable")
+        cwarning("please make sure your config file exists "
+                 "and is in valid format")
         return None
 
     client = pyimgur.Imgur(client_id, client_secret)
     auth_url = client.authorization_url('pin')
     webbrowser.open(auth_url)
-    pin = input("Please enter the PIN shown on the Imgur website: ")
+    try:
+        pin = input("Please enter the PIN shown on the Imgur website: ")
+    except EOFError:
+        sys.stderr.write("\n")
+        cerror("no input")
+        return None
     client.exchange_pin(pin)
     refresh_token = client.refresh_token
-    sys.stderr.write("Refresh token generated.\n")
+    cprogress("Refresh token generated.")
 
     # add credentials to config file
     conf_file = imgur.authenticate.get_conf_file()
@@ -54,7 +61,7 @@ def authorize(client_id, client_secret):
     }
     with open(conf_file, 'w') as conf_obj:
         config.write(conf_obj)
-        sys.stderr.write("Written: %s\n" % conf_file)
+        cprogress("Written: %s" % conf_file)
     return client
 
 def main():
@@ -72,5 +79,5 @@ def main():
 
     client_id, client_secret, _ = imgur.authenticate.get_credentials()
     if authorize(client_id, client_secret) is None:
-        sys.stderr.write("error: authorization failed\n")
+        cerror("authorization failed")
         return 1

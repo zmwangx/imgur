@@ -6,9 +6,9 @@ import os
 import sys
 import tempfile
 import unittest
+import urllib.request
 
 import PIL.Image
-import urllib.request
 from zmwangx.infrastructure import capture_stdout, capture_stderr, change_home
 
 import imgur.upload

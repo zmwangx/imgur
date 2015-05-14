@@ -54,13 +54,10 @@ class TestUpload(unittest.TestCase):
                     except SystemExit:
                         raise SystemExit(sys.stderr.getvalue())
 
-                    sys.stderr.write("getvalue: %s\n" % str(type(sys.stdout)))
                     output = sys.stdout.getvalue()
                     imageurls = output.strip().split("\n")
                     self.assertEqual(len(imageurls), 1)
                     imageurl = imageurls[0]
-                    sys.stderr.write(str(type(sys.stdout)))
-                    sys.stderr.write(str(type(sys.stderr)))
                     # download uploaded image and make sure it's
                     # identical to the original
                     downloaded_imagepath, _ = urllib.request.urlretrieve(imageurl)

@@ -2,6 +2,8 @@
 
 """Authorize with Imgur's OAuth API and generate refresh token."""
 
+# pylint: disable=wildcard-import,unused-wildcard-import
+
 import argparse
 import configparser
 import sys

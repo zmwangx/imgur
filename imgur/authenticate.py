@@ -2,11 +2,15 @@
 
 """Authenticate with Imgur's OAuth API."""
 
+# pylint: disable=wildcard-import,unused-wildcard-import
+
 import configparser
 import os
 import sys
 
 import pyimgur
+
+from zmwangx.colorout import *
 
 import imgur.authorize
 
@@ -63,7 +67,7 @@ def gen_client():
 
     client_id, client_secret, refresh_token = get_credentials()
     if client_id is None or client_secret is None:
-        sys.stderr.write("warning: client_id or client_secret unavailable\n")
+        cwarning("client_id or client_secret unavailable")
         return None
 
     if refresh_token is None:

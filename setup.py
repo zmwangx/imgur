@@ -35,6 +35,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'imgur-authorize=imgur.authorize:main',
+            'imgur-save=imgur.save:main',
             'imgur-upload=imgur.upload:main',
         ]
     },

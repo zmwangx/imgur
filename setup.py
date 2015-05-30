@@ -31,6 +31,10 @@ setuptools.setup(
     packages=['imgur'],
     install_requires=[
         'pyimgur>=0.5.2',
+        'zmwangx>=0.1.31+g932db22',
+    ],
+    dependency_links = [
+        'git+https://github.com/zmwangx/pyzmwangx.git@master#egg=zmwangx-0.1.31',
     ],
     entry_points={
         'console_scripts': [

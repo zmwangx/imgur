@@ -12,6 +12,20 @@ over the uploaded images later.
 Installation
 ------------
 
+Clone the repository, then in the root of the repository, do ::
+
+  pip install .
+
+or ::
+
+  ./setup.py install
+
+Note that some older versions of ``setuptools`` might not work; in
+that case, run ``pip install --upgrade pip`` first.
+
+Usage
+-----
+
 This package installs two console scripts, ``imgur-authorize`` and
 ``imgur-upload``. The invocations are::
 

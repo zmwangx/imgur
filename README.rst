@@ -43,7 +43,7 @@ Credentials and configuration file
 ----------------------------------
 
 You should put your credentials (client id and client secret) in a
-configuration file located at ``$XDG_CONFIG_HOME/imgur/imgur.conf`, or
+configuration file located at ``$XDG_CONFIG_HOME/imgur/imgur.conf``, or
 if the environment variable ``XDG_CONFIG_HOME`` is not defined,
 ``~/.config/imgur/imgur.conf``. The standard INI format is used, and
 ``client_id`` and ``client_secret`` should be placed under the

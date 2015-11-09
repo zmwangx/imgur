@@ -73,7 +73,7 @@ An authorization URI will be opened in your default browser, and you
 will be asked to sign in to Imgur (if you are not already signed
 in). Afterwards, you will get a PIN from Imgur, which you can enter in
 to the CLI prompt. The program will take care of the rest
-automatically. The refrest token will be added to your config file for
+automatically. The refresh token will be added to your config file for
 future use, so you only need to authorize once.
 
 Alternatively, if you don't call ``imgur-authorize`` explicitly, then

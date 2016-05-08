@@ -31,7 +31,7 @@ setuptools.setup(
     keywords='image imgur upload',
     packages=['imgur'],
     install_requires=[
-        'pyimgur>=0.5.2',
+        'pyimgur==0.5.2',
         'zmwangx>=0.1.31+g932db22',
     ],
     dependency_links = [

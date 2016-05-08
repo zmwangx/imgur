@@ -1,2 +1,2 @@
-pyimgur>=0.5.2
+pyimgur==0.5.2
 git+git://github.com/zmwangx/pyzmwangx.git@master

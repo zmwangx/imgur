@@ -72,7 +72,8 @@ def upload_images(client, paths, jobs=None):
 
     """
 
-    pool_size = multiprocessing.cpu_count() * 2 if jobs is None else jobs
+    pool_size = (min(multiprocessing.cpu_count() * 2, len(paths))
+                 if jobs is None else jobs)
     if pool_size == 0:
         pool_size = len(paths)
     pool = multiprocessing.Pool(processes=pool_size)

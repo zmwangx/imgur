@@ -47,7 +47,7 @@ def get_credentials():
     refresh_token = config.get('oauth', 'refresh_token', fallback=None)
     return (client_id, client_secret, refresh_token)
 
-def gen_client():
+def gen_client(anonymous=False):
     """Generate an authenticated OAuth client with a fresh access_token.
 
     client_id, client_secret, and refresh_token are read from either
@@ -58,6 +58,12 @@ def gen_client():
     generate the token. The credentials are then used to initialize the
     client.
 
+    Parameters
+    ----------
+    anonymous : bool
+        Whether to generate an anonymous client (not logged in as a
+        user). Default is False.
+
     Returns
     -------
     client : pyimgur.Imgur
@@ -66,11 +72,11 @@ def gen_client():
     """
 
     client_id, client_secret, refresh_token = get_credentials()
-    if client_id is None or client_secret is None:
+    if client_id is None or (not anonymous and client_secret is None):
         cwarning("client_id or client_secret unavailable")
         return None
 
-    if refresh_token is None:
+    if not anonymous and refresh_token is None:
         sys.stderr.write("No refresh_token found in config file.\n"
                          "Generate one with imgur.authorize?\n")
         while True:
@@ -89,7 +95,10 @@ def gen_client():
         else:
             return None
 
-    client = pyimgur.Imgur(client_id, client_secret,
-                           refresh_token=refresh_token)
-    client.refresh_access_token()
+    if anonymous:
+        client = pyimgur.Imgur(client_id)
+    else:
+        client = pyimgur.Imgur(client_id, client_secret,
+                               refresh_token=refresh_token)
+        client.refresh_access_token()
     return client

@@ -62,6 +62,8 @@ def cli(action):
         imgur-upload. See "imgur-upload -h" for more details."""
 
     parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('-a', '--anonymous', action='store_true',
+                        help='upload anonymously')
     parser.add_argument('-j', '--jobs', type=int,
                         help="""Maximum number of concurrent jobs. If 0,
                         do not limit the number of jobs (not recommended
@@ -80,7 +82,7 @@ def cli(action):
                             help='source urls of images')
     args = parser.parse_args()
 
-    client = imgur.authenticate.gen_client()
+    client = imgur.authenticate.gen_client(anonymous=args.anonymous)
     if client is None:
         cfatal_error("failed to create client")
         return 1

@@ -33,7 +33,7 @@ This package installs two console scripts, ``imgur-authorize`` and
 
 and::
 
-  imgur-upload [-h] [-j JOBS] [--no-https] PATH [PATH ...]
+  imgur-upload [-h] [-a] [-j JOBS] [--no-https] PATH [PATH ...]
 
 Run the scripts with the ``-h`` flag for detailed explanations of the
 options. The use of ``imgur-authorize`` is also explained in the
